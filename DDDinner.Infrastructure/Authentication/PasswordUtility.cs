@@ -1,23 +1,37 @@
 ﻿using DDDinner.Application.Common.Interfaces.Authentication;
 using DDDinner.Application.Common.Services;
+using DDDinner.Contracts.Dtos;
 using DDDinner.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace DDDinner.Infrastructure.Authentication
 {
-    public class JwtTokenGenerator : IJwtTokenGenerator
+    public class PasswordUtility : IPasswordUtility
     {
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly JwtSettings _jwtSettings;
 
-        public JwtTokenGenerator(IDateTimeProvider dateTimeProvider, IOptions<JwtSettings> jwtSettings)
+        public PasswordUtility(IDateTimeProvider dateTimeProvider, IOptions<JwtSettings> jwtSettings)
         {
             _dateTimeProvider = dateTimeProvider;
             _jwtSettings = jwtSettings.Value;
+        }
+
+        public PasswordHashDto CreatePasswordDto(string password)
+        {
+            var passwordHashDto = new PasswordHashDto();
+            using (var hmac = new HMACSHA512())
+            {
+                passwordHashDto.PasswordSalt = hmac.Key;
+                passwordHashDto.PassworHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            }
+
+            return passwordHashDto;
         }
 
         public string GenerateToken(User user)
@@ -45,7 +59,22 @@ namespace DDDinner.Infrastructure.Authentication
             var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
 
             return token;
-            
+        }
+
+        public bool CheckHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hmacsha = new HMACSHA512(passwordSalt))
+            {
+                var calculatedHash = hmacsha.ComputeHash(Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < calculatedHash.Length; i++)
+                {
+                    if (calculatedHash[i] != passwordHash[i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

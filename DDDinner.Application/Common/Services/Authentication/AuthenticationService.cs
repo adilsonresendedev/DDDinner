@@ -1,28 +1,36 @@
 using DDDinner.Application.Common.Interfaces.Authentication;
 using DDDinner.Application.Common.Persistence;
+using DDDinner.Domain.Common.Errors;
 using DDDinner.Domain.Entities;
+using ErrorOr;
 
 namespace DDDinner.Application.Common.Services.Authentication
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly IPasswordUtility _jwtTokenGenerator;
 
         public AuthenticationService(
-            IJwtTokenGenerator jwtTokenGenerator,
+            IPasswordUtility jwtTokenGenerator,
             IUserRepository userRepository)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
             _userRepository = userRepository;
         }
 
-        public AuthenticationResult Login(string email, string password)
+        public async Task<ErrorOr<AuthenticationResult>> Login(string email, string password)
         {
-            var user = _userRepository.GetUserByEmail(email);
+            var user = await _userRepository.GetUserByEmail(email);
             if (user == null)
             {
-                throw new Exception("User doesn't exist .");
+                return Errors.User.EmailNotFound;
+            }
+
+            var passwordCheckResult = _jwtTokenGenerator.CheckHash(password, user.PasswordHash, user.PasswordSalt);
+            if (!passwordCheckResult)
+            {
+                return Errors.User.Unauthorized;
             }
 
             var token = _jwtTokenGenerator.GenerateToken(user);
@@ -34,13 +42,15 @@ namespace DDDinner.Application.Common.Services.Authentication
                 token);
         }
 
-        public AuthenticationResult Register(string firstName, string lastName, string email, string password)
+        public async Task<ErrorOr<AuthenticationResult>> Register(string firstName, string lastName, string email, string password)
         {
-            var existingUser = _userRepository.GetUserByEmail(email);
+            var existingUser = await _userRepository.GetUserByEmail(email);
             if (existingUser != null)
             {
-                throw new Exception("User already exists.");
+                return Errors.User.EmailDuplicated;
             }
+
+            var passwordHashDto = _jwtTokenGenerator.CreatePasswordDto(password);
 
             var user = new User
             {
@@ -48,11 +58,12 @@ namespace DDDinner.Application.Common.Services.Authentication
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
-                Password = password
+                PasswordHash = passwordHashDto.PassworHash,
+                PasswordSalt = passwordHashDto.PasswordSalt
 
             };
 
-            _userRepository.Add(user);
+            await _userRepository.Add(user);
             var token = _jwtTokenGenerator.GenerateToken(user);
             return new AuthenticationResult(
                 user.Id,

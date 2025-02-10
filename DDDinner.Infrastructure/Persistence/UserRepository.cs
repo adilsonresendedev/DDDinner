@@ -6,14 +6,21 @@ namespace DDDinner.Infrastructure.Persistence
     public class UserRepository : IUserRepository
     {
         private static readonly List<User> _users = new List<User>();
-        public void Add(User user)
+        public async Task Add(User user)
         {
-            _users.Add(user);
+            await Task.Run(() =>
+            {
+                _users.Add(user);
+            });
         }
 
-        public User GetUserByEmail(string email)
+        public async Task<User> GetUserByEmail(string email)
         {
-            var user = _users.SingleOrDefault(x => x.Email == email);
+            User user = null;
+            await Task<User>.Run(() =>
+            {
+                user = _users.SingleOrDefault(x => x.Email == email);
+            });
             return user;
         }
     }

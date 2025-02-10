@@ -1,3 +1,4 @@
+using DDDinner.Application.Common.Interfaces.Authentication;
 using DDDinner.Application.Common.Services.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 

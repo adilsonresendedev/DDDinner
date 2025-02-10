@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DDDinner.Contracts\DDDinner.Contracts.csproj" />
     <ProjectReference Include="..\DDDinner.Domain\DDDinner.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ErrorOr" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
   </ItemGroup>
 </Project>

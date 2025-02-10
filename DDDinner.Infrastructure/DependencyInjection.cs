@@ -13,7 +13,7 @@ namespace DDDinner.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddSingleton<IPasswordUtility, PasswordUtility>();
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
