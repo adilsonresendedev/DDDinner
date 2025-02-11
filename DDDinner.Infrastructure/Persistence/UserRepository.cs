@@ -1,4 +1,4 @@
-﻿using DDDinner.Application.Common.Persistence;
+﻿using DDDinner.Application.Persistence;
 using DDDinner.Domain.Entities;
 
 namespace DDDinner.Infrastructure.Persistence

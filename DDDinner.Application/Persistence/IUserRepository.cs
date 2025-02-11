@@ -1,10 +1,10 @@
 ﻿using DDDinner.Domain.Entities;
 
-namespace DDDinner.Application.Common.Persistence
+namespace DDDinner.Application.Persistence
 {
     public interface IUserRepository
     {
-        Task<User?> GetUserByEmail(string email);
+        Task<User> GetUserByEmail(string email);
         Task Add(User user);
     }
 }

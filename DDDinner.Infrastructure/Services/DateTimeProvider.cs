@@ -1,4 +1,4 @@
-﻿using DDDinner.Application.Common.Services;
+﻿using DDDinner.Application.Common;
 
 namespace DDDinner.Infrastructure.Services
 {

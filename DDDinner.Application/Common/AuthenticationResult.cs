@@ -1,4 +1,4 @@
-namespace DDDinner.Application.Common.Services.Authentication
+namespace DDDinner.Application.Common
 {
     public record AuthenticationResult(
         Guid Id,

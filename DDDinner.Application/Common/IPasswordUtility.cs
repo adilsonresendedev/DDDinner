@@ -1,7 +1,7 @@
 ﻿using DDDinner.Contracts.Dtos;
 using DDDinner.Domain.Entities;
 
-namespace DDDinner.Application.Common.Interfaces.Authentication
+namespace DDDinner.Application.Common
 {
     public interface IPasswordUtility
     {

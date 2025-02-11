@@ -1,5 +1,4 @@
-﻿using DDDinner.Application.Common.Interfaces.Authentication;
-using DDDinner.Application.Common.Services;
+﻿using DDDinner.Application.Common;
 using DDDinner.Contracts.Dtos;
 using DDDinner.Domain.Entities;
 using Microsoft.Extensions.Options;

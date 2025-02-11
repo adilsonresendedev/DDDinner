@@ -1,13 +1,12 @@
-using DDDinner.Application.Common.Interfaces.Authentication;
-using DDDinner.Application.Common.Services.Authentication;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace DDDinner.Application
 {
     public static class DependencyInjection
     {
         public static IServiceCollection AddApplication(this IServiceCollection services){
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             return services;
         }
     }

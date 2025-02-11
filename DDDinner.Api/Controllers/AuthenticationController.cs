@@ -1,5 +1,7 @@
-using DDDinner.Application.Common.Interfaces.Authentication;
+using DDDinner.Application.Authentication.Commands.Register;
+using DDDinner.Application.Authentication.Queries;
 using DDDinner.Contracts.Authentication;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDinner.Api.Controllers
@@ -7,28 +9,26 @@ namespace DDDinner.Api.Controllers
     [Route("[controller]")]
     public class AuthenticationController : ApiController
     {
-        private readonly IAuthenticationService _authenticationService;
-        private readonly ILogger<AuthenticationController> _logger;
+        private readonly ISender _sender;
 
-        public AuthenticationController(
-            IAuthenticationService authenticationService,
-            ILogger<AuthenticationController> logger)
+        public AuthenticationController(ISender sender)
         {
-            _authenticationService = authenticationService;
-            _logger = logger;
+            _sender = sender;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]RegisterRequest inbound)
         {
-            var result = await _authenticationService.Register(inbound.FirstName, inbound.LastName, inbound.Email, inbound.Password);
+            var registerCommand = new RegisterCommand(inbound.FirstName, inbound.LastName, inbound.Email, inbound.Password);
+            var result = await _sender.Send(registerCommand);
             return HandleResult(result);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest inbound)
         {
-            var result = await _authenticationService.Login(inbound.Email, inbound.Password);
+            var loginQuery = new LoginQuery(inbound.Email, inbound.Password);
+            var result = await _sender.Send(loginQuery);
             return HandleResult(result);
         }
     }

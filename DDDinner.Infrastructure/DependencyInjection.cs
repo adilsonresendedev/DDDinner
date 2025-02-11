@@ -1,6 +1,5 @@
-﻿using DDDinner.Application.Common.Interfaces.Authentication;
-using DDDinner.Application.Common.Persistence;
-using DDDinner.Application.Common.Services;
+﻿using DDDinner.Application.Common;
+using DDDinner.Application.Persistence;
 using DDDinner.Infrastructure.Authentication;
 using DDDinner.Infrastructure.Persistence;
 using DDDinner.Infrastructure.Services;

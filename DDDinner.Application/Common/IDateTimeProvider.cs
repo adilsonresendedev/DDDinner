@@ -1,4 +1,4 @@
-﻿namespace DDDinner.Application.Common.Services
+﻿namespace DDDinner.Application.Common
 {
     public interface IDateTimeProvider
     {
